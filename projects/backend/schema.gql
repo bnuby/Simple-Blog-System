@@ -1,0 +1,180 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type User {
+  id: String!
+  full_name: String!
+  first_name: String!
+  last_name: String!
+  email: String!
+  age: Float!
+  last_login_date: DateTime!
+  created_at: DateTime!
+  updated_at: DateTime!
+  posts(after: String, take: Int = 10, title: String, description: String, likes: Int = 0, user_id: String): PaginatedPost!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type UserEdge {
+  cursor: String!
+  node: User!
+}
+
+type PaginatedUser {
+  edges: [UserEdge!]
+  nodes: [User!]
+  totalCount: Int!
+  currentCursor: String
+  hasNextPage: Boolean!
+}
+
+type PaginatedUser2 {
+  total: Int!
+  page: Int!
+  totalPage: Int!
+  data: [User!]!
+}
+
+type Any {
+  any: String!
+}
+
+type AnyEdge {
+  cursor: String!
+  node: Any!
+}
+
+type SimpleLikeUser {
+  id: String!
+  first_name: String!
+  last_name: String!
+  age: Int!
+  create_at: DateTime!
+}
+
+type Post {
+  id: String!
+  title: String!
+  description: String!
+  likes: Int!
+  like_users: [SimpleLikeUser!]!
+  user_id: String!
+  created_at: DateTime!
+  updated_at: DateTime!
+  user: User!
+}
+
+type PostEdge {
+  cursor: String!
+  node: Post!
+}
+
+type PaginatedPost {
+  edges: [PostEdge!]
+  nodes: [Post!]
+  totalCount: Int!
+  currentCursor: String
+  hasNextPage: Boolean!
+}
+
+type PaginatedPost2 {
+  total: Int!
+  page: Int!
+  totalPage: Int!
+  data: [Post!]!
+}
+
+type ResTypeBoolean {
+  status: Boolean!
+  code: String!
+  msg: String
+  data: Boolean
+  err: [String!]
+}
+
+type ResTypeString {
+  status: Boolean!
+  code: String!
+  msg: String
+  data: String
+  err: [String!]
+}
+
+type ResTypePost {
+  status: Boolean!
+  code: String!
+  msg: String
+  data: Post
+  err: [String!]
+}
+
+type Query {
+  """Retrieve Single User Detail"""
+  user(first_name: String, last_name: String, email: String, ageGte: Int = 0): User
+
+  """Retrieve Multiple User Data"""
+  users(page: Int = 1, take: Int!, first_name: String, last_name: String, email: String, ageGte: Int = 0): PaginatedUser2!
+  userPaginate(after: String, take: Int = 10, first_name: String, last_name: String, email: String, ageGte: Int = 0): PaginatedUser!
+
+  """Retrieve Single Post Data"""
+  post(title: String, description: String, likes: Int = 0, user_id: String): Post
+
+  """Retrieve Multiple Post Data"""
+  posts(page: Int = 1, take: Int!, title: String, description: String, likes: Int = 0, user_id: String): PaginatedPost2!
+
+  """Retrieve Multiple Post Data"""
+  postsPaginate(after: String, take: Int = 10, title: String, description: String, likes: Int = 0, user_id: String): PaginatedPost!
+}
+
+type Mutation {
+  loginUser(login: LoginDTO!): ResTypeString!
+  validateToken(token: String!): User
+  createUser(create: CreateUserInput!): ResTypeBoolean!
+  updateUser(update: UpdateUserInput!, user_id: String!): ResTypeBoolean!
+  deleteUser(user_id: String!): ResTypeBoolean!
+  createPost(create: PostInput!): ResTypePost
+  updatePost(update: PostUpdate!, post_id: String!): ResTypePost
+  deletePost(post_id: String!): ResTypePost!
+}
+
+input LoginDTO {
+  email: String!
+  password: String!
+}
+
+input CreateUserInput {
+  first_name: String!
+  last_name: String!
+  email: String!
+  password: String!
+  age: Int!
+}
+
+input UpdateUserInput {
+  first_name: String
+  last_name: String
+  password: String
+  age: Int
+}
+
+input PostInput {
+  title: String!
+  description: String!
+  user_id: String!
+}
+
+input PostUpdate {
+  title: String
+  description: String
+}
+
+type Subscription {
+  postAdded: Post!
+  postDeleted: Post!
+  postUpdated: Post!
+}

@@ -1,0 +1,29 @@
+version: '3'
+services:
+  server:
+    tty: true
+    stdin_open: true
+    image: bnuby/node:ubuntu-focal
+    build:
+      context: dockerfile
+      dockerfile: node-base.dockerfile
+
+    ports:
+      - 8082:80
+      - 8083:81
+
+    volumes:
+      - ./projects:/workspace
+
+  mongo:
+    image: mongo:4.4-rc-bionic
+    ports:
+      - 27040:27017
+
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: secret
+
+    volumes:
+      - ./mongo/db:/data/db 
+      - ./mongo/configdb:/data/configdb
