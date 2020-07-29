@@ -1,4 +1,4 @@
-import { Resolver, Args, Query, Mutation, Parent, ResolveField, Subscription } from "@nestjs/graphql";
+import { Resolver, Args, Query, Mutation, Parent, ResolveField, Subscription, CONTEXT } from "@nestjs/graphql";
 import { PostService } from "~src/components/post/post.service";
 import { PostArgs } from "~src/components/post/dto/post.args";
 import { PostsArgs } from "~src/components/post/dto/posts.args";
@@ -8,9 +8,9 @@ import { PostInput } from "~src/components/post/dto/post.input";
 import { UserService } from "~src/components/user/user.service";
 import { User } from "~src/components/user/user.schema";
 import { PubSub } from 'graphql-subscriptions';
-import { ResType } from "~src/types/res.type";
+import { ResType, ResTypeBoolean } from "~src/types/res.type";
 import { CommonResolve } from "~components/common/common.resolve";
-import { UseFilters, UseGuards } from "@nestjs/common";
+import { UseFilters, UseGuards, Inject } from "@nestjs/common";
 import { GraphqlExceptionFilter } from "~filters/graphql-exception.filter";
 import { AuthGuard } from '~guards/auth.guard';
 import { IgnoreGuard } from '~decorators/ignore-guard';
@@ -25,6 +25,7 @@ const pubSub = new PubSub();
 export class PostResolver extends CommonResolve {
 
   constructor(
+    @Inject(CONTEXT) private readonly context: any,
     private readonly service: PostService,
     private readonly userService: UserService,
   ) {
@@ -141,6 +142,50 @@ export class PostResolver extends CommonResolve {
       code: "S_014",
       data: post as Post
     };
+  }
+
+  @Mutation(() => ResTypeBoolean)
+  async likePost(
+    @Args("post_id")
+    post_id: string
+  ): Promise<ResType<boolean>> {
+    const { user } = this.context;
+
+    if (post_id.length != 24) {
+      return {
+        status: false,
+        code: "F_015"
+      }
+    }
+
+    const ok = await this.service.likePost(user, post_id);
+
+    return {
+      status: ok,
+      code: ok ? "S_015" : "F_015",
+    };
+  }
+
+  @Mutation(() => ResTypeBoolean)
+  async unlikePost(
+    @Args("post_id")
+    post_id: string
+  ): Promise<ResType<boolean>> {
+    const { user } = this.context;
+
+    if (post_id.length != 24) {
+      return {
+        status: false,
+        code: "F_016"
+      }
+    }
+
+    const ok = await this.service.unlikePost(user, post_id);
+
+    return {
+      status: ok,
+      code: ok ? "S_016" : "F_016",
+    }
   }
 
   @IgnoreGuard()

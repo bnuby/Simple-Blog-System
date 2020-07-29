@@ -22,21 +22,21 @@ export class User extends Document {
       return `${this.first_name} ${this.last_name}`;
     },
   })
-  @Field()
+  @Field({ nullable: true })
   full_name: string
 
   @Prop({
     required: true,
     type: SchemaTypes.String,
   })
-  @Field()
+  @Field({ nullable: true })
   first_name: string;
 
   @Prop({
     required: true,
     type: SchemaTypes.String,
   })
-  @Field()
+  @Field({ nullable: true })
   last_name: string;
 
   @Prop({

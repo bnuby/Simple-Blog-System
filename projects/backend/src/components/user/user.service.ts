@@ -1,18 +1,16 @@
 import { CreateUserInput } from './dto/create-user.input';
-import { Injectable, Logger, ExecutionContext, Inject } from "@nestjs/common";
-import { Model, Types } from "mongoose";
+import { Injectable, Logger } from "@nestjs/common";
+import { Model } from "mongoose";
 import { User, PaginatedUser, PaginatedUser2 } from "~src/components/user/user.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { CreateUserDTO } from "~src/components/user/dto/create-user.dto";
 import { FindUserDTO } from "~src/components/user/dto/find-user.dto";
 import { UsersArgs } from "~src/components/user/dto/users.args";
 import { UpdateUserInput } from '~src/components/user/dto/update-user.input';
-import { SafeService } from '~src/services/safe.service';
 import { Dict } from '~src/types/dict.type';
 import { UserPaginateArgs } from '~src/components/user/dto/user-paginate.args';
 import { CommonService } from '~src/components/common/common.service';
 import { PostService } from '~src/components/post/post.service';
-import { REQUEST } from '@nestjs/core';
 
 @Injectable()
 export class UserService extends CommonService {
@@ -21,7 +19,6 @@ export class UserService extends CommonService {
     @InjectModel(User.name)
     private readonly model: Model<User>,
     private readonly postService: PostService,
-    private readonly safeService: SafeService
   ) {
     super();
   }
@@ -129,9 +126,15 @@ export class UserService extends CommonService {
    * Create New User
    * @param create 
    */
-  async create(create: CreateUserDTO | CreateUserInput): Promise<boolean> {
+  async create(create: CreateUserDTO | CreateUserInput | Dict<any> ): Promise<boolean> {
+
+    let user = await this.findOne({email: create.email});
+    if (user) {
+      return false;
+    }
+
     try {
-      const user = new this.model(create);
+      user = new this.model(create);
       await user.save()
     } catch (e) {
       Logger.log(e.toString());

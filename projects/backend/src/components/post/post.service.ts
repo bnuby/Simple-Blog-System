@@ -19,7 +19,7 @@ export class PostService extends CommonService {
     @InjectModel(User.name)
     private readonly userModel: Model<User>,
     @InjectModel(Post.name)
-    private readonly model: Model<Post>
+    private readonly model: Model<Post>,
   ) {
     super();
   }
@@ -61,6 +61,13 @@ export class PostService extends CommonService {
       {
         $addFields: {
           'id': "$_id",
+          'likes': {
+            $cond: {
+              if: { $isArray: "$like_users" },
+              then: { $size: "$like_users" },
+              else: 0
+            }
+          }
         }
       }
     ]);
@@ -89,6 +96,13 @@ export class PostService extends CommonService {
       {
         $addFields: {
           'id': "$_id",
+          'likes': {
+            $cond: {
+              if: { $isArray: "$like_users" },
+              then: { $size: "$like_users" },
+              else: 0
+            }
+          }
         }
       }
     ]);
@@ -124,6 +138,7 @@ export class PostService extends CommonService {
    * @param post_id 
    */
   async update(post_id: string, update: PostUpdate): Promise<Post | boolean> {
+
     let post = await this.model.findById(post_id).exec();
 
     if (!post) {
@@ -157,6 +172,64 @@ export class PostService extends CommonService {
       return false;
     }
     return post;
+  }
+
+  /**
+   * Like Post
+   * @param user 
+   * @param post_id 
+   */
+  async likePost(user: User, post_id: string): Promise<boolean> {
+
+    const post = await this.model.findById(post_id);
+
+    if (!post) {
+      return false;
+    }
+
+    // find user on post
+    const hadLike = post.like_users.find(s_user => s_user.id == user.id,);
+    if (!hadLike) {
+
+      // Add user likes
+      post.like_users.push({
+        id: user.id,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        age: user.age,
+        created_at: new Date(),
+      });
+      post.markModified('like_users');
+      await post.save();
+    }
+
+    return true;
+  }
+
+  /**
+   * Unlike Post
+   * @param user 
+   * @param post_id 
+   */
+  async unlikePost(user: User, post_id: string): Promise<boolean> {
+
+    const post = await this.model.findById(post_id);
+
+    if (!post) {
+      return false;
+    }
+
+    // find user on post
+    const userIndex = post.like_users.findIndex(s_user => s_user.id == user.id,);
+    if (userIndex >= 0) {
+
+      // Remove user likes
+      post.like_users.splice(userIndex, 1);
+      post.markModified('like_users');
+      await post.save();
+    }
+
+    return true;
   }
 
 }

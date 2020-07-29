@@ -15,6 +15,7 @@ import { CommonResolve } from '~components/common/common.resolve';
 import { UseGuards, UseFilters } from '@nestjs/common';
 import { AuthGuard } from '~guards/auth.guard';
 import { GraphqlExceptionFilter } from '~filters/graphql-exception.filter';
+import { IgnoreGuard } from '~decorators/ignore-guard';
 
 @Resolver(() => User)
 @UseGuards(AuthGuard)
@@ -28,6 +29,7 @@ export class UserResolver extends CommonResolve {
     super();
   }
 
+  @IgnoreGuard()
   @Query(() => User, { nullable: true, description: "Retrieve Single User Detail" })
   async user(@Args() filter: FindUserDTO): Promise<User> {
     return await this.service.findOne(filter);

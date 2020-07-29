@@ -5,16 +5,16 @@ import { Min } from "class-validator";
 export class FindUserDTO {
 
   @Field(() => String, { nullable: true })
-  first_name: string;
+  first_name?: string;
 
   @Field(() => String, { nullable: true })
-  last_name: string;
+  last_name?: string;
 
   @Field(() => String, { nullable: true })
-  email: string;
+  email?: string;
 
   @Field(() => Int, { nullable: true })
   @Min(0)
-  ageGte = 0;
+  ageGte? = 0;
 
 }

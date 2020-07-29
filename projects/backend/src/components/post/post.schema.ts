@@ -2,19 +2,20 @@ import { Document, SchemaTypes } from "mongoose";
 import { ObjectType, Field, Int } from "@nestjs/graphql";
 import { Schema, SchemaFactory, Prop } from "@nestjs/mongoose";
 import { Paginated } from "~src/types/paginate.type";
+import { get } from "lodash";
 
-@ObjectType()
+@ObjectType({ description: "Users who like the post" })
 export class SimpleLikeUser {
-  @Field()
+  @Field({ description: "User Id" })
   id: string;
-  @Field()
+  @Field({ description: "User First Name" })
   first_name: string;
-  @Field()
+  @Field({ description: "User Last Name" })
   last_name: string;
-  @Field(() => Int)
+  @Field(() => Int, { description: "Age of the user" })
   age: number;
-  @Field(() => Date)
-  create_at: Date;
+  @Field(() => Date, { description: "Like Date" })
+  created_at: Date;
 }
 
 @ObjectType()
@@ -32,6 +33,7 @@ export class Post extends Document {
   @Prop({
     required: true,
     type: SchemaTypes.String,
+    maxlength: 100,
   })
   @Field()
   title: string;
@@ -44,17 +46,19 @@ export class Post extends Document {
   description: string;
 
   @Prop({
-    required: true,
     type: SchemaTypes.Number,
-    default: 0,
+    get: function () {
+      return get(this, 'like_users.length', 0);
+    }
   })
   @Field(() => Int)
   likes: number;
 
   @Prop({
-    type: [SchemaTypes.Mixed]
+    type: [SchemaTypes.Mixed],
+    default: []
   })
-  @Field(() => [SimpleLikeUser])
+  @Field(() => [SimpleLikeUser], { nullable: true })
   like_users: SimpleLikeUser[];
 
   @Prop({
@@ -63,6 +67,13 @@ export class Post extends Document {
   })
   @Field()
   user_id: string
+
+  @Prop({
+    type: SchemaTypes.Array,
+    default: [],
+  })
+  @Field(() => [String], { nullable: true })
+  keywords: string[]
 
   @Field(() => Date)
   created_at: Date;
@@ -73,7 +84,6 @@ export class Post extends Document {
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);
-
 
 @ObjectType()
 export class PaginatedPost extends Paginated(Post) { }

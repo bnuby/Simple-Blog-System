@@ -72,10 +72,12 @@ export function PaginateFilterd<T extends Base>(classRef: BaseClass<T>, type: Pa
     @ArgsType()
     abstract class PaginateFilter2 extends (classRef as BaseClass<Base>) {
 
-      @Field(() => Int)
+      @Field(() => Int, { })
+      @Min(1)
       page = 1;
-      @Field(() => Int)
-      take: 10
+      @Field(() => Int, { nullable: true })
+      @Min(1)
+      take = 10
 
     }
     return PaginateFilter2;

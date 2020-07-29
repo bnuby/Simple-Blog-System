@@ -4,9 +4,9 @@
 
 type User {
   id: String!
-  full_name: String!
-  first_name: String!
-  last_name: String!
+  full_name: String
+  first_name: String
+  last_name: String
   email: String!
   age: Float!
   last_login_date: DateTime!
@@ -49,12 +49,22 @@ type AnyEdge {
   node: Any!
 }
 
+"""Users who like the post"""
 type SimpleLikeUser {
+  """User Id"""
   id: String!
+
+  """User First Name"""
   first_name: String!
+
+  """User Last Name"""
   last_name: String!
+
+  """Age of the user"""
   age: Int!
-  create_at: DateTime!
+
+  """Like Date"""
+  created_at: DateTime!
 }
 
 type Post {
@@ -62,8 +72,9 @@ type Post {
   title: String!
   description: String!
   likes: Int!
-  like_users: [SimpleLikeUser!]!
+  like_users: [SimpleLikeUser!]
   user_id: String!
+  keywords: [String!]
   created_at: DateTime!
   updated_at: DateTime!
   user: User!
@@ -118,33 +129,30 @@ type Query {
   user(first_name: String, last_name: String, email: String, ageGte: Int = 0): User
 
   """Retrieve Multiple User Data"""
-  users(page: Int = 1, take: Int!, first_name: String, last_name: String, email: String, ageGte: Int = 0): PaginatedUser2!
+  users(page: Int = 1, take: Int = 10, first_name: String, last_name: String, email: String, ageGte: Int = 0): PaginatedUser2!
   userPaginate(after: String, take: Int = 10, first_name: String, last_name: String, email: String, ageGte: Int = 0): PaginatedUser!
 
   """Retrieve Single Post Data"""
   post(title: String, description: String, likes: Int = 0, user_id: String): Post
 
   """Retrieve Multiple Post Data"""
-  posts(page: Int = 1, take: Int!, title: String, description: String, likes: Int = 0, user_id: String): PaginatedPost2!
+  posts(page: Int = 1, take: Int = 10, title: String, description: String, likes: Int = 0, user_id: String): PaginatedPost2!
 
   """Retrieve Multiple Post Data"""
   postsPaginate(after: String, take: Int = 10, title: String, description: String, likes: Int = 0, user_id: String): PaginatedPost!
 }
 
 type Mutation {
-  loginUser(login: LoginDTO!): ResTypeString!
-  validateToken(token: String!): User
   createUser(create: CreateUserInput!): ResTypeBoolean!
   updateUser(update: UpdateUserInput!, user_id: String!): ResTypeBoolean!
   deleteUser(user_id: String!): ResTypeBoolean!
   createPost(create: PostInput!): ResTypePost
   updatePost(update: PostUpdate!, post_id: String!): ResTypePost
   deletePost(post_id: String!): ResTypePost!
-}
-
-input LoginDTO {
-  email: String!
-  password: String!
+  likePost(post_id: String!): ResTypeBoolean!
+  unlikePost(post_id: String!): ResTypeBoolean!
+  loginUser(login: LoginDTO!): ResTypeString!
+  validateToken(token: String!): User
 }
 
 input CreateUserInput {
@@ -166,11 +174,18 @@ input PostInput {
   title: String!
   description: String!
   user_id: String!
+  keywords: [String!]!
 }
 
 input PostUpdate {
   title: String
   description: String
+  keywords: [String!]
+}
+
+input LoginDTO {
+  email: String!
+  password: String!
 }
 
 type Subscription {
