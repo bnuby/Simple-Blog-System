@@ -12,7 +12,7 @@ type User {
   last_login_date: DateTime!
   created_at: DateTime!
   updated_at: DateTime!
-  posts(after: String, take: Int = 10, title: String, description: String, likes: Int = 0, user_id: String): PaginatedPost!
+  posts(after: String, take: Int = 10, id: String, title: String, description: String, likeGte: Int = 0, user_id: String): PaginatedPost!
 }
 
 """
@@ -133,16 +133,18 @@ type Query {
   userPaginate(after: String, take: Int = 10, first_name: String, last_name: String, email: String, ageGte: Int = 0): PaginatedUser!
 
   """Retrieve Single Post Data"""
-  post(title: String, description: String, likes: Int = 0, user_id: String): Post
+  post(id: String, title: String, description: String, likeGte: Int = 0, user_id: String): Post
 
   """Retrieve Multiple Post Data"""
-  posts(page: Int = 1, take: Int = 10, title: String, description: String, likes: Int = 0, user_id: String): PaginatedPost2!
+  posts(page: Int = 1, take: Int = 10, id: String, title: String, description: String, likeGte: Int = 0, user_id: String): PaginatedPost2!
 
   """Retrieve Multiple Post Data"""
-  postsPaginate(after: String, take: Int = 10, title: String, description: String, likes: Int = 0, user_id: String): PaginatedPost!
+  postsPaginate(after: String, take: Int = 10, id: String, title: String, description: String, likeGte: Int = 0, user_id: String): PaginatedPost!
 }
 
 type Mutation {
+  loginUser(login: LoginDTO!): ResTypeString!
+  validateToken(token: String!): User
   createUser(create: CreateUserInput!): ResTypeBoolean!
   updateUser(update: UpdateUserInput!, user_id: String!): ResTypeBoolean!
   deleteUser(user_id: String!): ResTypeBoolean!
@@ -151,8 +153,11 @@ type Mutation {
   deletePost(post_id: String!): ResTypePost!
   likePost(post_id: String!): ResTypeBoolean!
   unlikePost(post_id: String!): ResTypeBoolean!
-  loginUser(login: LoginDTO!): ResTypeString!
-  validateToken(token: String!): User
+}
+
+input LoginDTO {
+  email: String!
+  password: String!
 }
 
 input CreateUserInput {
@@ -173,7 +178,6 @@ input UpdateUserInput {
 input PostInput {
   title: String!
   description: String!
-  user_id: String!
   keywords: [String!]!
 }
 
@@ -181,11 +185,6 @@ input PostUpdate {
   title: String
   description: String
   keywords: [String!]
-}
-
-input LoginDTO {
-  email: String!
-  password: String!
 }
 
 type Subscription {

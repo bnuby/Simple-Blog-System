@@ -1,3 +1,4 @@
+import { Types } from 'mongoose';
 import { Dict } from './../../types/dict.type';
 import { QueryHelper } from './../../helpers/query.helper';
 import { Model } from 'mongoose';
@@ -26,6 +27,11 @@ export class PostService extends CommonService {
 
   private shareFilterProcess(query: Dict<any>): Dict<any> {
     const filter = {};
+
+    if (query.id) {
+      filter['_id'] = new Types.ObjectId(query.id);
+    }
+
     const likeKeys = ['title', 'description'];
     QueryHelper.mapFilterLike(filter, query, likeKeys)
 
@@ -33,8 +39,12 @@ export class PostService extends CommonService {
     QueryHelper.mapFilterEq(filter, query, eqKeys)
 
     // Gtes
-    const gteKeys = ['likes'];
-    QueryHelper.mapFilterOperation('$gte', query, gteKeys)
+    if (query.likeGte > 0) {
+      filter[`like_users.${query.likeGte - 1}`] = {
+        $exists: 1
+      }
+    }
+
     return filter;
   }
 
@@ -139,7 +149,11 @@ export class PostService extends CommonService {
    */
   async update(post_id: string, update: PostUpdate): Promise<Post | boolean> {
 
-    let post = await this.model.findById(post_id).exec();
+    let post = await this.findOne({
+      id: post_id,
+      user_id: update.user_id,
+    });
+    // let post = await this.model.findById(post_id).exec();
 
     if (!post) {
       return false;
@@ -159,8 +173,12 @@ export class PostService extends CommonService {
    * 
    * @return Promise<boolean>
    */
-  async delete(post_id: string): Promise<Post | boolean> {
-    const post = await this.model.findById(post_id).exec();
+  async delete(post_id: string, user_id: string): Promise<Post | boolean> {
+
+    const post = await this.findOne({
+      id: post_id,
+      user_id: user_id,
+    });
 
     if (!post) {
       return false;

@@ -4,6 +4,9 @@ import { Min, IsString, IsInt } from "class-validator";
 @ArgsType()
 export class PostArgs {
 
+  @Field({nullable: true})
+  id?: string;
+
   @Field({ nullable: true })
   title?: string
 
@@ -12,7 +15,7 @@ export class PostArgs {
 
   @Field(() => Int)
   @Min(0)
-  likes? = 0;
+  likeGte? = 0;
 
   @Field({ nullable: true })
   user_id?: string;

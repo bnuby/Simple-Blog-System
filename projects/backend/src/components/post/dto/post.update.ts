@@ -16,4 +16,6 @@ export class PostUpdate {
   @IsArray()
   keywords?: string[];
 
+  user_id: string;
+
 }

@@ -60,6 +60,11 @@ export class PostResolver extends CommonResolve {
   async createPost(
     @Args('create') create: PostInput,
   ): Promise<ResType<Post>> {
+
+    const { user } = this.context;
+
+    create.user_id = user.id;
+
     const post = await this.service.create(create);
 
     if (!post) {
@@ -85,6 +90,11 @@ export class PostResolver extends CommonResolve {
     @Args('post_id') post_id: string,
     @Args('update') update: PostUpdate,
   ): Promise<ResType<Post | boolean>> {
+
+    const { user } = this.context;
+
+    update.user_id = user.id;
+
     const failRes = {
       status: false,
       code: "F_013",
@@ -118,6 +128,8 @@ export class PostResolver extends CommonResolve {
     post_id: string
   ): Promise<ResType<Post | boolean>> {
 
+    const { user } = this.context;
+
     const failRes = {
       status: false,
       code: "F_014",
@@ -130,7 +142,7 @@ export class PostResolver extends CommonResolve {
     let post: Post | boolean = false;
 
     // Validate Post Length
-    post = await this.service.delete(post_id);
+    post = await this.service.delete(post_id, user.id);
 
     if (!post) {
       return failRes;
