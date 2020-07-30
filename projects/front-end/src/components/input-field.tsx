@@ -6,6 +6,8 @@ import {
   FunctionComponent,
   ChangeEvent,
   KeyboardEvent,
+  ChangeEventHandler,
+  KeyboardEventHandler,
 } from "react";
 import GetId from "~lib/get-id";
 
@@ -16,9 +18,9 @@ interface InputFieldProp {
   name: string;
   type?: string;
   placeholder?: string;
-  inputRef?: RefObject<HTMLInputElement>;
-  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
-  onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
+  inputRef?: RefObject;
+  onChange?: ChangeEventHandler;
+  onKeyDown?: KeyboardEventHandler;
   style?: CSSProperties;
   labelStyle?: CSSProperties;
   inputStyle?: CSSProperties;
@@ -44,6 +46,38 @@ const inputField: FunctionComponent<InputFieldProp> = ({
 }: InputFieldProp) => {
   const id = GetId("input-");
 
+  const input = (
+    <input
+      id={id}
+      style={inputStyle}
+      ref={inputRef}
+      name={name}
+      type={type}
+      onChange={onChange}
+      onKeyDown={onKeyDown}
+      placeholder={placeholder}
+      defaultValue={value}
+      autoComplete={autocomplete}
+      min={min}
+    />
+  );
+
+  const textArea = (
+    <textarea
+      id={id}
+      style={inputStyle}
+      itemRef={inputRef}
+      onChange={onChange}
+      onKeyDown={onKeyDown}
+      name={name}
+      type={type}
+      placeholder={placeholder}
+      defaultValue={value}
+      autoComplete={autocomplete}
+      rows={3}
+    />
+  );
+
   return (
     <div className="input-group" style={style}>
       {noLabel ? null : (
@@ -51,19 +85,7 @@ const inputField: FunctionComponent<InputFieldProp> = ({
           {labelText}
         </label>
       )}
-      <input
-        id={id}
-        style={inputStyle}
-        ref={inputRef}
-        name={name}
-        type={type}
-        onChange={onChange}
-        onKeyDown={onKeyDown}
-        placeholder={placeholder}
-        defaultValue={value}
-        autoComplete={autocomplete}
-        min={min}
-      />
+      {type === "textarea" ? textArea : input}
     </div>
   );
 };

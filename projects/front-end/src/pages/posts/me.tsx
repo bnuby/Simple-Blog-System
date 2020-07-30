@@ -1,9 +1,4 @@
-import {
-  FunctionComponent,
-  useState,
-  createRef,
-  RefObject,
-} from "react";
+import { FunctionComponent, useState, createRef, RefObject } from "react";
 import { getPosts, PostsFilter, deletePost } from "~src/request/post";
 import PostModel from "~src/model/post.model";
 import PostCard from "~components/post-card";
@@ -79,7 +74,8 @@ const PostIndex: FunctionComponent<PostIndexProps> = ({
 
     if (
       pageOptions.filters.title === postsFilter.title &&
-      pageOptions.filters.likeGte === postsFilter.likeGte
+      pageOptions.filters.likeGte === postsFilter.likeGte &&
+      pageOptions.filters.page === page
     ) {
       return;
     }
@@ -93,6 +89,7 @@ const PostIndex: FunctionComponent<PostIndexProps> = ({
         likeGte: postsFilter.likeGte,
         user_id: me.id,
       },
+      posts: res.posts,
     });
   };
 
@@ -141,11 +138,8 @@ const PostIndex: FunctionComponent<PostIndexProps> = ({
     // Get not empty queries
     const filter = getNotEmptyFilter(pageOptions.filters);
 
-    console.log(filter);
-
     // fetch post
     const { data, error } = getPosts(filter);
-    console.log(data);
 
     // check the response is valid.
     if (data && data.posts && data.posts.data) {
@@ -154,7 +148,7 @@ const PostIndex: FunctionComponent<PostIndexProps> = ({
           total: data.posts.total,
           page: data.posts.page,
           totalPage: data.posts.totalPage,
-          posts: data.posts.data,
+          posts: [...pageOptions.posts, ...data.posts.data],
         };
 
         toastr.success("Fetch Post Successul");
@@ -165,10 +159,7 @@ const PostIndex: FunctionComponent<PostIndexProps> = ({
   }
 
   return (
-    <Layout
-      titleName="My Posts"
-    >
-
+    <Layout titleName="My Posts">
       {/* Search */}
       <div
         style={{

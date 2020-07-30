@@ -58,6 +58,7 @@ const postForm: FunctionComponent<PostFormProps> = ({
           placeholder="Insert description"
           labelText="Description"
           name="description"
+          type="textarea"
           value={req.description}
           onChange={onInputChange}
         />

@@ -1,9 +1,4 @@
-import {
-  FunctionComponent,
-  useState,
-  createRef,
-  RefObject,
-} from "react";
+import { FunctionComponent, useState, createRef, RefObject } from "react";
 import { getPosts, PostsFilter } from "~src/request/post";
 import PostModel from "~src/model/post.model";
 import PostCard from "~components/post-card";
@@ -76,7 +71,8 @@ const PostIndex: FunctionComponent<PostIndexProps> = ({
 
     if (
       pageOptions.filters.title === postsFilter.title &&
-      pageOptions.filters.likeGte === postsFilter.likeGte
+      pageOptions.filters.likeGte === postsFilter.likeGte &&
+      pageOptions.filters.page === page
     ) {
       return;
     }
@@ -89,6 +85,7 @@ const PostIndex: FunctionComponent<PostIndexProps> = ({
         title: postsFilter.title,
         likeGte: postsFilter.likeGte,
       },
+      posts: res.posts,
     });
   };
 
@@ -106,7 +103,7 @@ const PostIndex: FunctionComponent<PostIndexProps> = ({
           total: data.posts.total,
           page: data.posts.page,
           totalPage: data.posts.totalPage,
-          posts: data.posts.data,
+          posts: [...pageOptions.posts, ...data.posts.data],
         };
 
         toastr.success("Fetch Post Successul");
@@ -117,9 +114,7 @@ const PostIndex: FunctionComponent<PostIndexProps> = ({
   }
 
   return (
-    <Layout
-      titleName="Home Page"
-    >
+    <Layout titleName="Home Page">
       {/* Search */}
       <div
         style={{
@@ -151,10 +146,11 @@ const PostIndex: FunctionComponent<PostIndexProps> = ({
 
       <div className={styles.postList}>
         {res.posts.map((post, idx) => (
-          <PostCard 
-          href={`/posts/${post.id}`}
-          post={post} 
-          key={`post-card-${idx}`} />
+          <PostCard
+            href={`/posts/${post.id}`}
+            post={post}
+            key={`post-card-${idx}`}
+          />
         ))}
 
         {res.total === res.posts.length ? (
