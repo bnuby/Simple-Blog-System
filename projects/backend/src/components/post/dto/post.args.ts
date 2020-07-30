@@ -18,6 +18,9 @@ export class PostArgs {
   likeGte? = 0;
 
   @Field({ nullable: true })
+  keywords?: string;
+
+  @Field({ nullable: true })
   user_id?: string;
 
 }

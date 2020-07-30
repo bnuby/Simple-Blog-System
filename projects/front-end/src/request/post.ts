@@ -8,6 +8,7 @@ export interface PostFilter {
   id?: string;
   title?: string;
   description?: string;
+  keywords?: string;
   likeGte?: number;
   user_id?: string;
 }

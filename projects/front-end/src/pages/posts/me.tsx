@@ -19,6 +19,7 @@ interface PostIndexProps {
   customRefs?: {
     title: RefObject<HTMLInputElement>;
     likeGte: RefObject<HTMLInputElement>;
+    keywords: RefObject<HTMLInputElement>;
   };
 }
 
@@ -52,6 +53,7 @@ const PostIndex: FunctionComponent<PostIndexProps> = ({
       page: 1,
       title: "",
       likeGte: 0,
+      keywords: "",
       user_id: me.id,
     },
     posts: [] as PostModel[],
@@ -64,10 +66,15 @@ const PostIndex: FunctionComponent<PostIndexProps> = ({
    * @param page
    */
   const searchPost = (page: number) => {
-    if (customRefs?.title.current && customRefs?.likeGte.current) {
+    if (
+      customRefs?.title.current && 
+      customRefs?.likeGte.current &&
+      customRefs?.keywords.current
+      ) {
       postsFilter = {
         title: customRefs.title.current.value,
         likeGte: +customRefs.likeGte.current.value,
+        keywords: customRefs.keywords.current.value,
         user_id: me.id,
       };
     }
@@ -75,6 +82,7 @@ const PostIndex: FunctionComponent<PostIndexProps> = ({
     if (
       pageOptions.filters.title === postsFilter.title &&
       pageOptions.filters.likeGte === postsFilter.likeGte &&
+      pageOptions.filters.keywords === postsFilter.keywords &&
       pageOptions.filters.page === page
     ) {
       return;
@@ -87,6 +95,7 @@ const PostIndex: FunctionComponent<PostIndexProps> = ({
         page,
         title: postsFilter.title,
         likeGte: postsFilter.likeGte,
+        keywords: postsFilter.keywords,
         user_id: me.id,
       },
       posts: res.posts,
@@ -176,17 +185,33 @@ const PostIndex: FunctionComponent<PostIndexProps> = ({
           inputRef={customRefs.title}
         />
         <InputField
-          style={{ width: "300px" }}
+          style={{ width: "200px" }}
           inputStyle={{ width: "40px" }}
           placeholder="Input Number"
-          labelText="Like (Greater Than)"
+          labelText="Like >="
           name="likeGte"
           type="number"
           inputRef={customRefs.likeGte}
           min={0}
         />
+        <InputField
+          style={{ width: "300px" }}
+          inputStyle={{ width: "40px" }}
+          placeholder="Input Keyword"
+          labelText="Keyword"
+          name="keywords"
+          type="text"
+          inputRef={customRefs.keywords}
+          min={0}
+        />
 
-        <Button text="Search" onClick={() => searchPost(1)} />
+        <Button
+          text="Search"
+          onClick={() => {
+            res.posts = [];
+            searchPost(1);
+          }}
+        />
       </div>
 
       <div className={styles.postList}>
@@ -216,6 +241,7 @@ PostIndex.defaultProps = {
   customRefs: {
     title: createRef<HTMLInputElement>(),
     likeGte: createRef<HTMLInputElement>(),
+    keywords: createRef<HTMLInputElement>(),
   },
 };
 

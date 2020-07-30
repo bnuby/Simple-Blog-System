@@ -32,7 +32,7 @@ export class PostService extends CommonService {
       filter['_id'] = new Types.ObjectId(query.id);
     }
 
-    const likeKeys = ['title', 'description'];
+    const likeKeys = ['title', 'description', 'keywords'];
     QueryHelper.mapFilterLike(filter, query, likeKeys)
 
     const eqKeys = ['user_id']

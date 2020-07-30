@@ -12,7 +12,7 @@ type User {
   last_login_date: DateTime!
   created_at: DateTime!
   updated_at: DateTime!
-  posts(after: String, take: Int = 10, id: String, title: String, description: String, likeGte: Int = 0, user_id: String): PaginatedPost!
+  posts(after: String, take: Int = 10, id: String, title: String, description: String, likeGte: Int = 0, keywords: String, user_id: String): PaginatedPost!
 }
 
 """
@@ -133,13 +133,13 @@ type Query {
   userPaginate(after: String, take: Int = 10, first_name: String, last_name: String, email: String, ageGte: Int = 0): PaginatedUser!
 
   """Retrieve Single Post Data"""
-  post(id: String, title: String, description: String, likeGte: Int = 0, user_id: String): Post
+  post(id: String, title: String, description: String, likeGte: Int = 0, keywords: String, user_id: String): Post
 
   """Retrieve Multiple Post Data"""
-  posts(page: Int = 1, take: Int = 10, id: String, title: String, description: String, likeGte: Int = 0, user_id: String): PaginatedPost2!
+  posts(page: Int = 1, take: Int = 10, id: String, title: String, description: String, likeGte: Int = 0, keywords: String, user_id: String): PaginatedPost2!
 
   """Retrieve Multiple Post Data"""
-  postsPaginate(after: String, take: Int = 10, id: String, title: String, description: String, likeGte: Int = 0, user_id: String): PaginatedPost!
+  postsPaginate(after: String, take: Int = 10, id: String, title: String, description: String, likeGte: Int = 0, keywords: String, user_id: String): PaginatedPost!
 }
 
 type Mutation {
