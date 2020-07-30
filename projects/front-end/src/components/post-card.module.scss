@@ -1,0 +1,83 @@
+@import "~src/styles/variables";
+
+.postCard {
+  width: 80vw;
+  max-width: 1080px;
+  padding: 10px;
+  border: 1px $post-card-border-color solid;
+  border-radius: 5px;
+  box-shadow: 5px 5px 5px lighten($color: $post-card-shadow-color, $amount: 50);
+  background-color: white;
+  cursor: pointer;
+
+  z-index: 999;
+
+  transition: all ease 200ms;
+
+  &:not(:last-child) {
+    margin-bottom: 30px;
+  }
+
+  &:hover {
+    transform: scale(1.1) translateY(-5px);
+    z-index: 1000;
+    box-shadow: 5px 5px 5px $post-card-shadow-color;
+  }
+}
+
+.titleBlk {
+  display: flex;
+  align-items: center;
+}
+
+.title {
+  font-size: 30px;
+  color: $text-color;
+  font-weight: 900;
+  padding: 0;
+}
+
+.userInfo {
+  color: $text-color2;
+
+  &:before {
+    content: "-";
+    padding: 0 20px;
+  }
+}
+
+.createdTitle {
+
+}
+
+.createdAt {
+
+}
+
+.keywords {
+  margin-top: 10px;
+}
+
+.tag {
+  padding: 5px 10px;
+  border-radius: 5px;
+  text-align: center;
+  box-shadow: inset 0px 0px 10px transparentize($color: white, $amount: 0.2);
+  cursor: pointer;
+  background-color: $red;
+  color: white;
+
+  &:before {
+    content: "#";
+    padding-right: 2px;
+  }
+
+  &:not(:last-child) {
+    margin: 5px 5px 5px 0px;
+  }
+
+  &:hover {
+    color: $yellow;
+    background-color: darken($red, 10);
+  }
+}

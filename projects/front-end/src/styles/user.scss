@@ -1,0 +1,28 @@
+.userMe {
+  
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .person-img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+  }
+
+  .row {
+    padding: 5px 0;
+
+      .title {
+        display: inline-block;
+        width: 150px;
+      }
+
+      .value {
+        display: inline-block;
+        width: 150px;
+      }
+      
+  }
+}

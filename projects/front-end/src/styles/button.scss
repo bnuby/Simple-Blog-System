@@ -1,0 +1,42 @@
+@mixin button-variant($value) {
+  color: white;
+  background-color: $value;
+
+  &:hover {
+    background-color: darken($color: $value, $amount: 10);
+    color: lighten($color: $value, $amount: 30);
+  }
+}
+
+.button {
+  outline: none;
+  cursor: pointer;
+  box-shadow: 2px 2px 10px grey;
+  border-radius: 5px;
+  font-size: 20px;
+  padding: 5px 15px;
+
+  @each $color, $value in $theme-colors {
+    &.#{$color} {
+      @include button-variant($value);
+    }
+  }
+}
+
+
+.icon-button {
+  outline: none;
+  cursor: pointer;
+  box-shadow: 2px 2px 5px grey;
+  border-radius: 5px;
+  width: 30px;
+  height: 30px;
+  font-size: 14px;
+  padding: 5px;
+
+  @each $color, $value in $theme-colors {
+    &.#{$color} {
+      @include button-variant($value);
+    }
+  }
+}

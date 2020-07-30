@@ -1,0 +1,16 @@
+{
+  "title": "Simple Blog Website",
+  "description": "Next.js first assessment project",
+  "keywords": "simple blog, nextjs, blog",
+
+  "authTokenKey": "auth_token",
+  "userKey": "user_data",
+
+  "api": {
+    "host": "http://localhost",
+    "port": "80",
+    "path": "/graphql"
+  },
+
+  "testAuth": "bb371178cbd83a0b8554d4cc80f6362e:f22ce48c86b938c9928901a02c4183330aadbe573bd4b3f954aa672a9d94b637c029d63b60066d0cca1ebc0f878ac0d51d58b256aa361f19012a8232f8b1b6f5ad41033f85a50696aa2227040b8123c5"
+}

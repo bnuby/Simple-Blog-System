@@ -1,0 +1,16 @@
+@import "~src/styles/variables";
+
+.form {
+  margin: auto;
+  max-width: 600px;
+  padding: 5px;
+}
+
+.formRow {
+  width: fit-content;
+  margin: auto;
+
+  &:not(:last-child) {
+    margin-bottom: 20px;
+  }
+}

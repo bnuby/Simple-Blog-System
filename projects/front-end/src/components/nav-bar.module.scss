@@ -1,0 +1,166 @@
+@import "~src/styles/variables";
+
+.buttonBlk {
+  display: none;
+  height: $navbar-height;
+  width: 100%;
+  align-items: center;
+  overflow: hidden;
+}
+
+.navButton {
+  display: none;
+  background-color: $primary;
+  color: white;
+  border-radius: 5px;
+  border: 1px solid $secondary;
+  box-shadow: 2px 2px transparentize($color: black, $amount: 0.5);
+  height: 30px;
+  width: 30px;
+  padding: 5px;
+  margin: 5px;
+  text-align: center;
+}
+
+.navBG {
+  position: relative;
+  height: $navbar-height;
+  background-color: white;
+  display: flex;
+  align-items: center;
+}
+
+.nav {
+  display: flex;
+  flex-flow: row wrap;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  height: $navbar-height;
+  background-color: $navbar-bg-color;
+  border-bottom: 1px solid grey;
+
+  justify-content: space-between;
+}
+
+.navList {
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
+
+.navItem {
+  padding: 20px;
+  height: 20px;
+  list-style: none;
+  color: $navitem-color;
+  background-color: $navitem-bg-color;
+  cursor: pointer;
+
+  &:hover {
+    color: $navitem-hv-color;
+    background-color: $navitem-hv-bg-color;
+  }
+
+  &.active {
+    color: $navitem-active-color;
+  }
+
+  & a {
+    color: inherit;
+    text-decoration: none;
+  }
+}
+
+.authPanel {
+  display: flex;
+  padding: 5px;
+  align-items: center;
+}
+
+.loginBlk {
+  border-radius: 5px;
+  cursor: pointer;
+  color: white;
+  padding: 10px 20px;
+  box-shadow: 2px 2px 2px grey;
+  border-radius: 5px;
+  background-color: skyblue;
+}
+
+.userBlk {
+  border-radius: 5px;
+  background-color: teal;
+  cursor: pointer;
+  color: white;
+  padding: 10px 20px;
+  box-shadow: 2px 2px 2px grey;
+
+  &:hover {
+    background-color: darken(teal, 10%);
+  }
+}
+
+.authBlock {
+    display: flex;
+}
+
+.logoutBtn {
+  margin-left: 5px;
+}
+
+@media screen and (max-width: 768px) {
+
+  .buttonBlk, .loginBlk {
+    display: flex;
+  }
+
+  .navButton {
+    display: block;
+  }
+
+  .nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    flex-flow: column;
+    padding: 5px;
+
+    justify-content: start;
+    transition: height ease 800ms;
+    overflow: hidden;
+    height: 0px;
+
+    &.show {
+      height: calc(100vh - #{$navbar-height});
+    }
+    z-index: 9999;
+  }
+
+  .navBG {
+    overflow: hidden;
+  }
+  
+  
+  .navList {
+    flex-direction: column;
+  }
+
+  .authPanel {
+    display: block;
+    padding: 0px;
+  }
+
+  .userBlk {
+    border-radius: 0px;
+  }
+
+  .authBlock {
+    margin-top: 5px;
+    width: 100%;
+  }
+
+  .logoutBtn {
+  }
+
+}

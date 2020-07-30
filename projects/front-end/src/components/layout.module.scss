@@ -1,0 +1,42 @@
+@import "~src/styles/variables";
+
+.container {
+  background-color: $background-color;
+  padding: $container-padding;
+  min-height: calc(100vh - #{$container-padding * 2 + $navbar-height});
+  display: flex;
+}
+
+.main {
+  flex-grow: 1;
+  overflow: overlay;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.headerImage {
+  width: 6rem;
+  height: 6rem;
+}
+
+.headerHomeImage {
+  width: 8rem;
+  height: 8rem;
+}
+
+.backToHome {
+  margin: 3rem 0 0;
+}
+
+@media screen and (max-width: 768px) {
+
+  .container {
+    padding: 0;
+    min-height: calc(100vh - #{$navbar-height});
+    max-height: calc(100vh - #{$navbar-height});
+  }
+}
