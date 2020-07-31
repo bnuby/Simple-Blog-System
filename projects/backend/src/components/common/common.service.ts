@@ -1,9 +1,12 @@
 import { Field } from '@nestjs/graphql';
-import { Paginated, PaginateFilterd, PaginateType } from '~src/types/paginate.type';
-import { Dict } from "~src/types/dict.type";
+import {
+  Paginated,
+  PaginateFilterd,
+  PaginateType,
+} from '~src/types/paginate.type';
+import { Dict } from '~src/types/dict.type';
 import { ObjectType, ArgsType } from '@nestjs/graphql';
 import { Model, Types } from 'mongoose';
-
 
 @ArgsType()
 @ObjectType()
@@ -12,22 +15,25 @@ export class Any {
   any: string;
 }
 
-export class PaginatedAny extends Paginated(Any) { }
-export class PaginatedAny2 extends Paginated(Any, 'normal') { }
+export class PaginatedAny extends Paginated(Any) {}
+export class PaginatedAny2 extends Paginated(Any, 'normal') {}
 
-export class AnyPaginatedArgs extends PaginateFilterd(Any) { }
+export class AnyPaginatedArgs extends PaginateFilterd(Any) {}
 
 export abstract class CommonService {
-
   /**
    * Share Paginate
-   * @param model 
-   * @param filter 
-   * @param query 
-   * @param extraPipe 
+   * @param model
+   * @param filter
+   * @param query
+   * @param extraPipe
    */
-  protected async sharePaginate(model: Model<any>, filter: Dict<any>, query: AnyPaginatedArgs, extraPipe: Dict<any>[] = []): Promise<PaginatedAny | PaginatedAny2> {
-
+  protected async sharePaginate(
+    model: Model<any>,
+    filter: Dict<any>,
+    query: AnyPaginatedArgs,
+    extraPipe: Dict<any>[] = [],
+  ): Promise<PaginatedAny | PaginatedAny2> {
     let type: PaginateType = 'node';
     /**
      * Data Pipe
@@ -39,53 +45,53 @@ export abstract class CommonService {
         $match: {
           _id: {
             $gt: new Types.ObjectId(query.after),
-          }
+          },
         },
       });
     } else if (query.page) {
       // normal paginate
-      type = "normal";
-      const skip = (query.page - 1) * query.take /* per_page */
+      type = 'normal';
+      const skip = (query.page - 1) * query.take; /* per_page */
       datasPipe.push({
         $skip: skip,
-      })
+      });
     }
 
-    datasPipe.push(
-      ...(extraPipe || []),
-      {
-        $limit: query.take,
-      });
+    datasPipe.push(...(extraPipe || []), {
+      $limit: query.take,
+    });
 
     /**
      * Aggregate Search
      */
-    let aggregateResult = await model.aggregate([
-      {
-        $match: filter
-      },
-      {
-        $facet: {
-          count: [
-            {
-              $group: {
-                _id: null,
-                count: { $sum: 1 }
-              }
-            },
-          ],
-          datas: datasPipe,
-        }
-      },
-      {
-        $project: {
-          count: {
-            $first: "$count"
+    let aggregateResult = await model
+      .aggregate([
+        {
+          $match: filter,
+        },
+        {
+          $facet: {
+            count: [
+              {
+                $group: {
+                  _id: null,
+                  count: { $sum: 1 },
+                },
+              },
+            ],
+            datas: datasPipe,
           },
-          datas: 1
-        }
-      }
-    ]).exec();
+        },
+        {
+          $project: {
+            count: {
+              $first: '$count',
+            },
+            datas: 1,
+          },
+        },
+      ])
+      .exec();
 
     let result: PaginatedAny | PaginatedAny2;
     switch (type) {
@@ -143,5 +149,4 @@ export abstract class CommonService {
 
     return result;
   }
-
 }

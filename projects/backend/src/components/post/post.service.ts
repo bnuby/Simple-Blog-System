@@ -1,9 +1,13 @@
 import { Types } from 'mongoose';
-import { Dict } from './../../types/dict.type';
-import { QueryHelper } from './../../helpers/query.helper';
+import { Dict } from '~types/dict.type';
+import { QueryHelper } from '~helpers/query.helper';
 import { Model } from 'mongoose';
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { Post, PaginatedPost, PaginatedPost2 } from '~src/components/post/post.schema';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Post,
+  PaginatedPost,
+  PaginatedPost2,
+} from '~src/components/post/post.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { PostArgs } from '~src/components/post/dto/post.args';
 import { PostsArgs } from '~src/components/post/dto/posts.args';
@@ -15,12 +19,11 @@ import { PostUpdate } from '~components/post/dto/post.update';
 
 @Injectable()
 export class PostService extends CommonService {
-
   constructor(
     @InjectModel(User.name)
     private readonly userModel: Model<User>,
     @InjectModel(Post.name)
-    private readonly model: Model<Post>,
+    private readonly model: Model<Post>
   ) {
     super();
   }
@@ -33,16 +36,16 @@ export class PostService extends CommonService {
     }
 
     const likeKeys = ['title', 'description', 'keywords'];
-    QueryHelper.mapFilterLike(filter, query, likeKeys)
+    QueryHelper.mapFilterLike(filter, query, likeKeys);
 
-    const eqKeys = ['user_id']
-    QueryHelper.mapFilterEq(filter, query, eqKeys)
+    const eqKeys = ['user_id'];
+    QueryHelper.mapFilterEq(filter, query, eqKeys);
 
     // Gtes
     if (query.likeGte > 0) {
       filter[`like_users.${query.likeGte - 1}`] = {
-        $exists: 1
-      }
+        $exists: 1,
+      };
     }
 
     return filter;
@@ -50,10 +53,9 @@ export class PostService extends CommonService {
 
   /**
    * Find One Post
-   * @param query 
+   * @param query
    */
   async findOne(query: PostArgs): Promise<Post> {
-
     const filter = this.shareFilterProcess(query);
 
     return await this.model.findOne(filter).exec();
@@ -64,22 +66,21 @@ export class PostService extends CommonService {
    * @param query
    */
   async find(query: PostsArgs): Promise<PaginatedPost2> {
-
     const filter = this.shareFilterProcess(query);
 
     const result = await this.sharePaginate(this.model, filter, query, [
       {
         $addFields: {
-          'id': "$_id",
-          'likes': {
+          id: '$_id',
+          likes: {
             $cond: {
-              if: { $isArray: "$like_users" },
-              then: { $size: "$like_users" },
-              else: 0
-            }
-          }
-        }
-      }
+              if: { $isArray: '$like_users' },
+              then: { $size: '$like_users' },
+              else: 0,
+            },
+          },
+        },
+      },
     ]);
 
     return result as PaginatedPost2;
@@ -87,7 +88,7 @@ export class PostService extends CommonService {
 
   /**
    * Count User Posts
-   * @param user_id 
+   * @param user_id
    */
   async countByUser(user_id: string): Promise<number> {
     return await this.model.find({ user_id }).count();
@@ -98,34 +99,32 @@ export class PostService extends CommonService {
    * @
    */
   async paginate(query: PostsPaginateArgs): Promise<PaginatedPost> {
-
     // Create Share Filter
     const filter = this.shareFilterProcess(query);
 
     return await this.sharePaginate(this.model, filter, query, [
       {
         $addFields: {
-          'id': "$_id",
-          'likes': {
+          id: '$_id',
+          likes: {
             $cond: {
-              if: { $isArray: "$like_users" },
-              then: { $size: "$like_users" },
-              else: 0
-            }
-          }
-        }
-      }
+              if: { $isArray: '$like_users' },
+              then: { $size: '$like_users' },
+              else: 0,
+            },
+          },
+        },
+      },
     ]);
   }
 
   /**
    * Create New Post
-   * @param {PostInput} create 
-   * 
+   * @param {PostInput} create
+   *
    * @return Promise<Post>
    */
   async create(create: PostInput): Promise<Post> {
-
     const user = await this.userModel.findById(create.user_id).exec();
 
     if (!user) {
@@ -136,7 +135,7 @@ export class PostService extends CommonService {
       // Create a new post
       const post = new this.model(create);
 
-      return await post.save()
+      return await post.save();
     } catch (e) {
       console.log(e);
       return null;
@@ -145,10 +144,9 @@ export class PostService extends CommonService {
 
   /**
    * Update Post
-   * @param post_id 
+   * @param post_id
    */
   async update(post_id: string, update: PostUpdate): Promise<Post | boolean> {
-
     let post = await this.findOne({
       id: post_id,
       user_id: update.user_id,
@@ -170,11 +168,10 @@ export class PostService extends CommonService {
 
   /**
    * Delete Post
-   * 
+   *
    * @return Promise<boolean>
    */
   async delete(post_id: string, user_id: string): Promise<Post | boolean> {
-
     const post = await this.findOne({
       id: post_id,
       user_id: user_id,
@@ -185,7 +182,7 @@ export class PostService extends CommonService {
     }
 
     try {
-      await post.deleteOne()
+      await post.deleteOne();
     } catch (e) {
       return false;
     }
@@ -194,11 +191,10 @@ export class PostService extends CommonService {
 
   /**
    * Like Post
-   * @param user 
-   * @param post_id 
+   * @param user
+   * @param post_id
    */
   async likePost(user: User, post_id: string): Promise<boolean> {
-
     const post = await this.model.findById(post_id);
 
     if (!post) {
@@ -206,9 +202,8 @@ export class PostService extends CommonService {
     }
 
     // find user on post
-    const hadLike = post.like_users.find(s_user => s_user.id == user.id,);
+    const hadLike = post.like_users.find(s_user => s_user.id == user.id);
     if (!hadLike) {
-
       // Add user likes
       post.like_users.push({
         id: user.id,
@@ -226,11 +221,10 @@ export class PostService extends CommonService {
 
   /**
    * Unlike Post
-   * @param user 
-   * @param post_id 
+   * @param user
+   * @param post_id
    */
   async unlikePost(user: User, post_id: string): Promise<boolean> {
-
     const post = await this.model.findById(post_id);
 
     if (!post) {
@@ -238,9 +232,8 @@ export class PostService extends CommonService {
     }
 
     // find user on post
-    const userIndex = post.like_users.findIndex(s_user => s_user.id == user.id,);
+    const userIndex = post.like_users.findIndex(s_user => s_user.id == user.id);
     if (userIndex >= 0) {
-
       // Remove user likes
       post.like_users.splice(userIndex, 1);
       post.markModified('like_users');
@@ -249,5 +242,4 @@ export class PostService extends CommonService {
 
     return true;
   }
-
 }

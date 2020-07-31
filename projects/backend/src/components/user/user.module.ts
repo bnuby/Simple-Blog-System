@@ -1,18 +1,15 @@
-import { Module, DynamicModule, forwardRef } from "@nestjs/common";
-import { MongooseModule } from "@nestjs/mongoose";
-import { UserSchema, User } from "~src/components/user/user.schema";
-import { UserController } from "~src/components/user/user.controller";
-import { UserService } from "~src/components/user/user.service";
-import { UserResolver } from "~src/components/user/user.resolver";
-import { PostModule } from "~src/components/post/post.module";
-import { SafeService } from "~src/services/safe.service";
-import { AuthModule } from "~components/auth/auth.module";
+import { Module, DynamicModule, forwardRef } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
+import { UserSchema, User } from '~src/components/user/user.schema';
+import { UserController } from '~src/components/user/user.controller';
+import { UserService } from '~src/components/user/user.service';
+import { UserResolver } from '~src/components/user/user.resolver';
+import { PostModule } from '~src/components/post/post.module';
+import { SafeService } from '~src/services/safe.service';
+import { AuthModule } from '~components/auth/auth.module';
 
-
-@Module({
-})
+@Module({})
 export class UserModule {
-
   static forRoot(): DynamicModule {
     return {
       module: UserModule,
@@ -21,12 +18,8 @@ export class UserModule {
         PostModule.forShare(),
         MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
       ],
-      controllers: [
-        UserController,
-      ],
-      providers: [
-        UserService, UserResolver, SafeService
-      ],
+      controllers: [UserController],
+      providers: [UserService, UserResolver, SafeService],
     };
   }
 
@@ -37,13 +30,8 @@ export class UserModule {
         PostModule.forShare(),
         MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
       ],
-      providers: [
-        UserService, SafeService
-      ],
-      exports: [
-        MongooseModule,
-        UserService,
-      ]
+      providers: [UserService, SafeService],
+      exports: [MongooseModule, UserService],
     };
   }
 
@@ -53,9 +41,7 @@ export class UserModule {
       imports: [
         MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
       ],
-      exports: [
-        MongooseModule,
-      ]
+      exports: [MongooseModule],
     };
   }
 }

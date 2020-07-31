@@ -1,15 +1,22 @@
-import { ObjectType, Field, Int, ArgsType, InterfaceType } from "@nestjs/graphql";
-import { Min, Max } from "class-validator";
-import { Type } from "@nestjs/common";
+import {
+  ObjectType,
+  Field,
+  Int,
+  ArgsType,
+  InterfaceType,
+} from '@nestjs/graphql';
+import { Min, Max } from 'class-validator';
+import { Type } from '@nestjs/common';
 
-export type PaginateType = "node" | "normal";
+export type PaginateType = 'node' | 'normal';
 
-export function Paginated<T>(classRef: Type<T>, type: PaginateType = "node"): any {
-
+export function Paginated<T>(
+  classRef: Type<T>,
+  type: PaginateType = 'node',
+): any {
   if (type == 'normal') {
-
     @ObjectType({
-      isAbstract: true
+      isAbstract: true,
     })
     abstract class Paginate {
       @Field(() => Int)
@@ -22,16 +29,14 @@ export function Paginated<T>(classRef: Type<T>, type: PaginateType = "node"): an
       totalPage: number;
 
       @Field(() => [classRef])
-      data: T[]
+      data: T[];
     }
 
     return Paginate;
   }
 
-
   @ObjectType(`${classRef.name}Edge`)
   abstract class EdgeType {
-
     @Field(() => String)
     cursor: string;
 
@@ -42,10 +47,10 @@ export function Paginated<T>(classRef: Type<T>, type: PaginateType = "node"): an
   @ObjectType({ isAbstract: true })
   abstract class PaginatedType {
     @Field(() => [EdgeType], { nullable: true })
-    edges: EdgeType[]
+    edges: EdgeType[];
 
     @Field(() => [classRef], { nullable: true })
-    nodes: T[]
+    nodes: T[];
 
     @Field(() => Int)
     totalCount: number;
@@ -61,24 +66,24 @@ export function Paginated<T>(classRef: Type<T>, type: PaginateType = "node"): an
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface Base { }
+interface Base {}
 interface BaseClass<T> {
-  new(): T
+  new (): T;
 }
 
-export function PaginateFilterd<T extends Base>(classRef: BaseClass<T>, type: PaginateType = 'node'): any {
-
+export function PaginateFilterd<T extends Base>(
+  classRef: BaseClass<T>,
+  type: PaginateType = 'node',
+): any {
   if (type == 'normal') {
     @ArgsType()
     abstract class PaginateFilter2 extends (classRef as BaseClass<Base>) {
-
-      @Field(() => Int, { })
+      @Field(() => Int, {})
       @Min(1)
       page = 1;
       @Field(() => Int, { nullable: true })
       @Min(1)
-      take = 10
-
+      take = 10;
     }
     return PaginateFilter2;
   }

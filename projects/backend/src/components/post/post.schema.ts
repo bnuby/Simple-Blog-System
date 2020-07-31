@@ -1,20 +1,20 @@
-import { Document, SchemaTypes } from "mongoose";
-import { ObjectType, Field, Int } from "@nestjs/graphql";
-import { Schema, SchemaFactory, Prop } from "@nestjs/mongoose";
-import { Paginated } from "~src/types/paginate.type";
-import { get } from "lodash";
+import { Document, SchemaTypes } from 'mongoose';
+import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { Schema, SchemaFactory, Prop } from '@nestjs/mongoose';
+import { Paginated } from '~src/types/paginate.type';
+import { get } from 'lodash';
 
-@ObjectType({ description: "Users who like the post" })
+@ObjectType({ description: 'Users who like the post' })
 export class SimpleLikeUser {
-  @Field({ description: "User Id" })
+  @Field({ description: 'User Id' })
   id: string;
-  @Field({ description: "User First Name" })
+  @Field({ description: 'User First Name' })
   first_name: string;
-  @Field({ description: "User Last Name" })
+  @Field({ description: 'User Last Name' })
   last_name: string;
-  @Field(() => Int, { description: "Age of the user" })
+  @Field(() => Int, { description: 'Age of the user' })
   age: number;
-  @Field(() => Date, { description: "Like Date" })
+  @Field(() => Date, { description: 'Like Date' })
   created_at: Date;
 }
 
@@ -26,7 +26,6 @@ export class SimpleLikeUser {
   },
 })
 export class Post extends Document {
-
   @Field()
   id: string;
 
@@ -47,16 +46,16 @@ export class Post extends Document {
 
   @Prop({
     type: SchemaTypes.Number,
-    get: function () {
+    get: function() {
       return get(this, 'like_users.length', 0);
-    }
+    },
   })
   @Field(() => Int)
   likes: number;
 
   @Prop({
     type: [SchemaTypes.Mixed],
-    default: []
+    default: [],
   })
   @Field(() => [SimpleLikeUser], { nullable: true })
   like_users: SimpleLikeUser[];
@@ -66,27 +65,26 @@ export class Post extends Document {
     type: SchemaTypes.String,
   })
   @Field()
-  user_id: string
+  user_id: string;
 
   @Prop({
     type: SchemaTypes.Array,
     default: [],
   })
   @Field(() => [String], { nullable: true })
-  keywords: string[]
+  keywords: string[];
 
   @Field(() => Date)
   created_at: Date;
 
   @Field(() => Date)
   updated_at: Date;
-
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);
 
 @ObjectType()
-export class PaginatedPost extends Paginated(Post) { }
+export class PaginatedPost extends Paginated(Post) {}
 
 @ObjectType()
-export class PaginatedPost2 extends Paginated(Post, 'normal') { }
+export class PaginatedPost2 extends Paginated(Post, 'normal') {}

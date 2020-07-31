@@ -24,26 +24,22 @@ import { AuthService } from '~components/auth/auth.service';
       imports: [AuthModule.forShare()],
       inject: [AuthService.name],
       useFactory: async (authService: AuthService) => {
-
         return {
           disableHealthCheck: true,
           debug: true,
           playground: true,
           installSubscriptionHandlers: true,
           autoSchemaFile: 'schema.gql',
-          plugins: [
-            new GqlLoggingPlugin(),
-          ],
+          plugins: [new GqlLoggingPlugin()],
           context: ({ request }) => {
-            return ({
+            return {
               authScope: get(request, 'headers.authorization', null),
               req: request,
-            })
+            };
           },
           subscriptions: {
             // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-            onConnect: async (connectionParams) => {
-
+            onConnect: async connectionParams => {
               try {
                 const [, token] = connectionParams['authorization'].split(' ');
 
@@ -51,14 +47,13 @@ import { AuthService } from '~components/auth/auth.service';
               } catch (e) {
                 return false;
               }
-            }
-          }
-        }
-      }
-    })
+            },
+          },
+        };
+      },
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {
-}
+export class AppModule {}

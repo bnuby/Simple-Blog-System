@@ -1,19 +1,17 @@
-import { ObjectType, Field } from "@nestjs/graphql";
-import { Type } from "@nestjs/common";
+import { ObjectType, Field } from '@nestjs/graphql';
+import { Type } from '@nestjs/common';
 
 export type ResType<T> = {
-  status: boolean,
-  code: string,
-  msg?: string,
-  data?: T,
-  err?: any,
-}
+  status: boolean;
+  code: string;
+  msg?: string;
+  data?: T;
+  err?: any;
+};
 
 export function ResTyped<T>(classRef: Type<T>): any {
-
   @ObjectType({ isAbstract: true })
   abstract class ResType {
-
     @Field()
     status: boolean;
 
@@ -24,18 +22,17 @@ export function ResTyped<T>(classRef: Type<T>): any {
     msg?: string;
 
     @Field(() => classRef, { nullable: true })
-    data?: T
+    data?: T;
 
     @Field(() => [String], { nullable: true })
-    err?: string[]
-
+    err?: string[];
   }
 
-  return ResType
+  return ResType;
 }
 
 @ObjectType()
-export class ResTypeBoolean extends ResTyped(Boolean) {};
+export class ResTypeBoolean extends ResTyped(Boolean) {}
 
 @ObjectType()
-export class ResTypeString extends ResTyped(String) {};
+export class ResTypeString extends ResTyped(String) {}

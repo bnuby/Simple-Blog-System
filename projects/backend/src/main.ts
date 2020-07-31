@@ -16,11 +16,11 @@ async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     new FastifyAdapter({
-      logger: true
+      logger: true,
     }),
     {
       logger: true,
-    }
+    },
   );
 
   // Get Config Service
@@ -37,7 +37,7 @@ async function bootstrap() {
     email: configService.get<string>('ADMIN_EMAIL'),
     last_name: '(system)',
     age: 99,
-  })
+  });
 
   await app.listen(
     configService.get<number>('PORT', 80),
@@ -48,7 +48,5 @@ async function bootstrap() {
     module.hot.accept();
     module.hot.dispose(() => app.close());
   }
-
-
 }
 bootstrap();

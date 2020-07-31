@@ -1,9 +1,8 @@
-import { Field, Int, ArgsType } from "@nestjs/graphql";
-import { Min } from "class-validator";
+import { Field, Int, ArgsType } from '@nestjs/graphql';
+import { Min } from 'class-validator';
 
 @ArgsType()
 export class FindUserDTO {
-
   @Field(() => String, { nullable: true })
   first_name?: string;
 
@@ -16,5 +15,4 @@ export class FindUserDTO {
   @Field(() => Int, { nullable: true })
   @Min(0)
   ageGte? = 0;
-
 }

@@ -1,14 +1,13 @@
-import { ArgsType, Field, Int } from "@nestjs/graphql";
-import { Min, IsString, IsInt } from "class-validator";
+import { ArgsType, Field, Int } from '@nestjs/graphql';
+import { Min, IsString, IsInt } from 'class-validator';
 
 @ArgsType()
 export class PostArgs {
-
-  @Field({nullable: true})
+  @Field({ nullable: true })
   id?: string;
 
   @Field({ nullable: true })
-  title?: string
+  title?: string;
 
   @Field({ nullable: true })
   description?: string;
@@ -22,5 +21,4 @@ export class PostArgs {
 
   @Field({ nullable: true })
   user_id?: string;
-
 }

@@ -1,8 +1,8 @@
-import { ObjectType, Field } from "@nestjs/graphql";
-import { Schema, Prop, SchemaFactory } from "@nestjs/mongoose";
+import { ObjectType, Field } from '@nestjs/graphql';
+import { Schema, Prop, SchemaFactory } from '@nestjs/mongoose';
 import { Document, SchemaTypes } from 'mongoose';
 import { hashSync } from 'bcrypt';
-import { Paginated } from "~src/types/paginate.type";
+import { Paginated } from '~src/types/paginate.type';
 
 @ObjectType()
 @Schema({
@@ -12,18 +12,17 @@ import { Paginated } from "~src/types/paginate.type";
   },
 })
 export class User extends Document {
-
   @Field()
   id: string;
 
   @Prop({
     type: String,
-    get: function () {
+    get: function() {
       return `${this.first_name} ${this.last_name}`;
     },
   })
   @Field({ nullable: true })
-  full_name: string
+  full_name: string;
 
   @Prop({
     required: true,
@@ -51,9 +50,9 @@ export class User extends Document {
     required: true,
     type: SchemaTypes.String,
     select: false,
-    set: (value) => {
+    set: value => {
       return hashSync(value, 10);
-    }
+    },
   })
   password: string;
 
@@ -81,13 +80,12 @@ export class User extends Document {
 
   @Field(() => Date)
   updated_at: Date;
-
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
 
 @ObjectType()
-export class PaginatedUser extends Paginated(User) { }
+export class PaginatedUser extends Paginated(User) {}
 
 @ObjectType()
-export class PaginatedUser2 extends Paginated(User, 'normal') { }
+export class PaginatedUser2 extends Paginated(User, 'normal') {}

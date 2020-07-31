@@ -1,17 +1,30 @@
-import { Resolver, Args, Query, Mutation, Parent, ResolveField, Subscription, CONTEXT } from "@nestjs/graphql";
-import { PostService } from "~src/components/post/post.service";
-import { PostArgs } from "~src/components/post/dto/post.args";
-import { PostsArgs } from "~src/components/post/dto/posts.args";
-import { Post, PaginatedPost, PaginatedPost2 } from "~src/components/post/post.schema";
-import { PostsPaginateArgs } from "~src/components/post/dto/post-paginate.args";
-import { PostInput } from "~src/components/post/dto/post.input";
-import { UserService } from "~src/components/user/user.service";
-import { User } from "~src/components/user/user.schema";
+import {
+  Resolver,
+  Args,
+  Query,
+  Mutation,
+  Parent,
+  ResolveField,
+  Subscription,
+  CONTEXT,
+} from '@nestjs/graphql';
+import { PostService } from '~src/components/post/post.service';
+import { PostArgs } from '~src/components/post/dto/post.args';
+import { PostsArgs } from '~src/components/post/dto/posts.args';
+import {
+  Post,
+  PaginatedPost,
+  PaginatedPost2,
+} from '~src/components/post/post.schema';
+import { PostsPaginateArgs } from '~src/components/post/dto/post-paginate.args';
+import { PostInput } from '~src/components/post/dto/post.input';
+import { UserService } from '~src/components/user/user.service';
+import { User } from '~src/components/user/user.schema';
 import { PubSub } from 'graphql-subscriptions';
-import { ResType, ResTypeBoolean } from "~src/types/res.type";
-import { CommonResolve } from "~components/common/common.resolve";
-import { UseFilters, UseGuards, Inject } from "@nestjs/common";
-import { GraphqlExceptionFilter } from "~filters/graphql-exception.filter";
+import { ResType, ResTypeBoolean } from '~src/types/res.type';
+import { CommonResolve } from '~components/common/common.resolve';
+import { UseFilters, UseGuards, Inject } from '@nestjs/common';
+import { GraphqlExceptionFilter } from '~filters/graphql-exception.filter';
 import { AuthGuard } from '~guards/auth.guard';
 import { IgnoreGuard } from '~decorators/ignore-guard';
 import { PostUpdate } from '~components/post/dto/post.update';
@@ -23,7 +36,6 @@ const pubSub = new PubSub();
 @UseGuards(AuthGuard)
 @UseFilters(new GraphqlExceptionFilter())
 export class PostResolver extends CommonResolve {
-
   constructor(
     @Inject(CONTEXT) private readonly context: any,
     private readonly service: PostService,
@@ -33,20 +45,25 @@ export class PostResolver extends CommonResolve {
   }
 
   @IgnoreGuard()
-  @Query(() => Post, { nullable: true, description: "Retrieve Single Post Data" })
+  @Query(() => Post, {
+    nullable: true,
+    description: 'Retrieve Single Post Data',
+  })
   async post(@Args() filter: PostArgs): Promise<Post> {
     return await this.service.findOne(filter);
   }
 
   @IgnoreGuard()
-  @Query(() => PaginatedPost2, { description: "Retrieve Multiple Post Data" })
+  @Query(() => PaginatedPost2, { description: 'Retrieve Multiple Post Data' })
   async posts(@Args() filter: PostsArgs): Promise<PaginatedPost2> {
-    return await this.service.find(filter) as any;
+    return (await this.service.find(filter)) as any;
   }
 
   @IgnoreGuard()
-  @Query(() => PaginatedPost, { description: "Retrieve Multiple Post Data" })
-  async postsPaginate(@Args() filter: PostsPaginateArgs): Promise<PaginatedPost> {
+  @Query(() => PaginatedPost, { description: 'Retrieve Multiple Post Data' })
+  async postsPaginate(
+    @Args() filter: PostsPaginateArgs,
+  ): Promise<PaginatedPost> {
     return await this.service.paginate(filter);
   }
 
@@ -57,10 +74,7 @@ export class PostResolver extends CommonResolve {
   }
 
   @Mutation(() => ResTypePost, { nullable: true })
-  async createPost(
-    @Args('create') create: PostInput,
-  ): Promise<ResType<Post>> {
-
+  async createPost(@Args('create') create: PostInput): Promise<ResType<Post>> {
     const { user } = this.context;
 
     create.user_id = user.id;
@@ -71,7 +85,7 @@ export class PostResolver extends CommonResolve {
       // Fail to Create Post
       return {
         status: false,
-        code: "F_012",
+        code: 'F_012',
       };
     }
 
@@ -80,7 +94,7 @@ export class PostResolver extends CommonResolve {
     // Success
     return {
       status: true,
-      code: "S_012",
+      code: 'S_012',
       data: post,
     };
   }
@@ -90,21 +104,20 @@ export class PostResolver extends CommonResolve {
     @Args('post_id') post_id: string,
     @Args('update') update: PostUpdate,
   ): Promise<ResType<Post | boolean>> {
-
     const { user } = this.context;
 
     update.user_id = user.id;
 
     const failRes = {
       status: false,
-      code: "F_013",
+      code: 'F_013',
     };
 
     if (post_id.length != 24) {
       return failRes;
     }
 
-    const post = await this.service.update(post_id, update)
+    const post = await this.service.update(post_id, update);
 
     if (!post) {
       // Fail to update post.
@@ -114,25 +127,24 @@ export class PostResolver extends CommonResolve {
     // notify post updated
     pubSub.publish('postUpdated', { postUpdated: post });
 
-    // Success  
+    // Success
     return {
       status: true,
-      code: "S_013",
+      code: 'S_013',
       data: post,
-    }
+    };
   }
 
   @Mutation(() => ResTypePost)
   async deletePost(
-    @Args("post_id")
-    post_id: string
+    @Args('post_id')
+    post_id: string,
   ): Promise<ResType<Post | boolean>> {
-
     const { user } = this.context;
 
     const failRes = {
       status: false,
-      code: "F_014",
+      code: 'F_014',
     };
 
     if (post_id.length != 24) {
@@ -151,53 +163,53 @@ export class PostResolver extends CommonResolve {
 
     return {
       status: true,
-      code: "S_014",
-      data: post as Post
+      code: 'S_014',
+      data: post as Post,
     };
   }
 
   @Mutation(() => ResTypeBoolean)
   async likePost(
-    @Args("post_id")
-    post_id: string
+    @Args('post_id')
+    post_id: string,
   ): Promise<ResType<boolean>> {
     const { user } = this.context;
 
     if (post_id.length != 24) {
       return {
         status: false,
-        code: "F_015"
-      }
+        code: 'F_015',
+      };
     }
 
     const ok = await this.service.likePost(user, post_id);
 
     return {
       status: ok,
-      code: ok ? "S_015" : "F_015",
+      code: ok ? 'S_015' : 'F_015',
     };
   }
 
   @Mutation(() => ResTypeBoolean)
   async unlikePost(
-    @Args("post_id")
-    post_id: string
+    @Args('post_id')
+    post_id: string,
   ): Promise<ResType<boolean>> {
     const { user } = this.context;
 
     if (post_id.length != 24) {
       return {
         status: false,
-        code: "F_016"
-      }
+        code: 'F_016',
+      };
     }
 
     const ok = await this.service.unlikePost(user, post_id);
 
     return {
       status: ok,
-      code: ok ? "S_016" : "F_016",
-    }
+      code: ok ? 'S_016' : 'F_016',
+    };
   }
 
   @IgnoreGuard()
@@ -217,5 +229,4 @@ export class PostResolver extends CommonResolve {
   async postUpdated(): Promise<AsyncIterator<Post>> {
     return pubSub.asyncIterator('postUpdated');
   }
-
 }

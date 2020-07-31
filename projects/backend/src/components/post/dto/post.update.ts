@@ -1,9 +1,8 @@
-import { InputType, Field } from "@nestjs/graphql";
-import { IsArray, MaxLength, IsOptional } from "class-validator";
+import { InputType, Field } from '@nestjs/graphql';
+import { IsArray, MaxLength, IsOptional } from 'class-validator';
 
 @InputType()
 export class PostUpdate {
-
   @Field({ nullable: true })
   @IsOptional()
   @MaxLength(100)
@@ -17,5 +16,4 @@ export class PostUpdate {
   keywords?: string[];
 
   user_id: string;
-
 }

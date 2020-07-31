@@ -1,14 +1,13 @@
-import { ConfigService } from "@nestjs/config";
-import { createCipheriv, randomBytes, createDecipheriv, } from 'crypto';
-import { Injectable } from "@nestjs/common";
-import { from } from "rxjs";
-import { promisify } from "util";
-import { pipeline, Readable } from "stream";
-import { Dict } from "~src/types/dict.type";
+import { ConfigService } from '@nestjs/config';
+import { createCipheriv, randomBytes, createDecipheriv } from 'crypto';
+import { Injectable } from '@nestjs/common';
+import { from } from 'rxjs';
+import { promisify } from 'util';
+import { pipeline, Readable } from 'stream';
+import { Dict } from '~src/types/dict.type';
 
 @Injectable()
 export class SafeService {
-
   algorithm = 'aes-256-cbc';
   secret: Buffer;
   iv_length = 16;
@@ -27,16 +26,22 @@ export class SafeService {
     let encrypted = cipher.update(text);
     encrypted = Buffer.concat([encrypted, cipher.final()]);
 
-    return `${iv.toString('hex')}:${encrypted.toString('hex')}`
+    return `${iv.toString('hex')}:${encrypted.toString('hex')}`;
   }
 
   /**
    * Decrypt String
-   * @param text 
+   * @param text
    */
   decrypt(text: string): string {
-    const [iv, encrpytedText] = text.split(':').map(part => Buffer.from(part, 'hex'));
-    const decipher = createDecipheriv(this.algorithm, Buffer.from(this.secret), iv);
+    const [iv, encrpytedText] = text
+      .split(':')
+      .map(part => Buffer.from(part, 'hex'));
+    const decipher = createDecipheriv(
+      this.algorithm,
+      Buffer.from(this.secret),
+      iv,
+    );
     let decrypted = decipher.update(encrpytedText);
     decrypted = Buffer.concat([decrypted, decipher.final()]);
     return decrypted.toString();
@@ -56,5 +61,4 @@ export class SafeService {
   decryptToken(encryptedToken: string): Dict<any> {
     return JSON.parse(decodeURIComponent(this.decrypt(encryptedToken)));
   }
-
 }
