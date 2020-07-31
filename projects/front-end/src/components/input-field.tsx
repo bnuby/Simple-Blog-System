@@ -18,7 +18,7 @@ interface InputFieldProp {
   name: string;
   type?: string;
   placeholder?: string;
-  inputRef?: RefObject;
+  inputRef?: RefObject<any>;
   onChange?: ChangeEventHandler;
   onKeyDown?: KeyboardEventHandler;
   style?: CSSProperties;
@@ -66,11 +66,10 @@ const inputField: FunctionComponent<InputFieldProp> = ({
     <textarea
       id={id}
       style={inputStyle}
-      itemRef={inputRef}
+      ref={inputRef}
       onChange={onChange}
       onKeyDown={onKeyDown}
       name={name}
-      type={type}
       placeholder={placeholder}
       defaultValue={value}
       autoComplete={autocomplete}

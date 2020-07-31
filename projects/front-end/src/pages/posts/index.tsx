@@ -1,4 +1,10 @@
-import { FunctionComponent, useState, createRef, RefObject } from "react";
+import {
+  FunctionComponent,
+  useState,
+  createRef,
+  RefObject,
+  KeyboardEventHandler,
+} from "react";
 import { getPosts, PostsFilter } from "~src/request/post";
 import PostModel from "~src/model/post.model";
 import PostCard from "~components/post-card";
@@ -8,12 +14,10 @@ import { getNotEmptyFilter } from "~lib/query-helper";
 import InputField from "~components/input-field";
 import { isBrowser } from "~lib/is-browser";
 import Button from "~components/button";
-import { getLocalUser } from "~lib/auth";
-import UserModel from "~src/model/user.model";
-import { useRouter } from "next/dist/client/router";
-import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
 
+/**
+ * Post Index Page Props
+ */
 interface PostIndexProps {
   customRefs?: {
     title: RefObject<HTMLInputElement>;
@@ -22,14 +26,20 @@ interface PostIndexProps {
   };
 }
 
-const MySwal = withReactContent(Swal);
-
+/**
+ * Post Index Page
+ * @param param
+ */
 const PostIndex: FunctionComponent<PostIndexProps> = ({
   customRefs,
 }: PostIndexProps) => {
-  const me: UserModel = getLocalUser();
+  if (!customRefs) {
+    throw new Error("Refs must be empty");
+  }
 
-  const router = useRouter();
+  /**
+   * declare page variable
+   */
   let res: {
     total: number;
     page: number;
@@ -42,6 +52,9 @@ const PostIndex: FunctionComponent<PostIndexProps> = ({
     posts: [],
   };
 
+  /**
+   * Declare State for filtering, pagination
+   */
   const [pageOptions, setPageOptions] = useState<{
     totalData: number;
     filters: PostsFilter;
@@ -56,6 +69,7 @@ const PostIndex: FunctionComponent<PostIndexProps> = ({
     posts: [] as PostModel[],
   });
 
+  // declare temporary filter
   let postsFilter: PostsFilter = pageOptions.filters;
 
   /**
@@ -97,6 +111,14 @@ const PostIndex: FunctionComponent<PostIndexProps> = ({
     });
   };
 
+  // Key Enter Handler
+  const onKeyEnter: KeyboardEventHandler = (e) => {
+    if (e.key === "Enter") {
+      searchPost(1);
+    }
+  };
+
+  // check is browser or not
   if (isBrowser) {
     // Get not empty queries
     const filter = getNotEmptyFilter(pageOptions.filters);
@@ -107,20 +129,22 @@ const PostIndex: FunctionComponent<PostIndexProps> = ({
     // check the response is valid.
     if (data && data.posts && data.posts.data) {
       if (pageOptions.totalData !== +data.posts.total) {
+        // success
         res = {
           total: data.posts.total,
           page: data.posts.page,
           totalPage: data.posts.totalPage,
           posts: [...pageOptions.posts, ...data.posts.data],
         };
-
         toastr.success("Fetch Post Successul");
       }
     } else if (error) {
+      // fail
       toastr.error("Fetch Data Failed");
     }
   }
 
+  // return pages.
   return (
     <Layout titleName="Home Page">
       {/* Search */}
@@ -137,6 +161,7 @@ const PostIndex: FunctionComponent<PostIndexProps> = ({
           labelText="Title"
           name="title"
           inputRef={customRefs.title}
+          onKeyDown={onKeyEnter}
         />
         <InputField
           style={{ width: "200px" }}
@@ -147,6 +172,7 @@ const PostIndex: FunctionComponent<PostIndexProps> = ({
           type="number"
           inputRef={customRefs.likeGte}
           min={0}
+          onKeyDown={onKeyEnter}
         />
         <InputField
           style={{ width: "300px" }}
@@ -157,6 +183,7 @@ const PostIndex: FunctionComponent<PostIndexProps> = ({
           type="text"
           inputRef={customRefs.keywords}
           min={0}
+          onKeyDown={onKeyEnter}
         />
 
         <Button
@@ -173,6 +200,7 @@ const PostIndex: FunctionComponent<PostIndexProps> = ({
           <PostCard
             href={`/posts/${post.id}`}
             post={post}
+            // eslint-disable-next-line react/no-array-index-key
             key={`post-card-${idx}`}
           />
         ))}

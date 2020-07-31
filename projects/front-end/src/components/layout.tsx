@@ -13,9 +13,13 @@ interface LayoutProp {
   children: any;
 }
 
-const Layout: FunctionComponent<LayoutProp> = ({ titleName, pageName, children }: LayoutProp) => {
-
-  let login = false, user = null;
+const Layout: FunctionComponent<LayoutProp> = ({
+  titleName,
+  pageName,
+  children,
+}: LayoutProp) => {
+  let login = false,
+    user = null;
 
   if (isBrowser) {
     // Check Login
@@ -26,7 +30,7 @@ const Layout: FunctionComponent<LayoutProp> = ({ titleName, pageName, children }
   return (
     <div>
       <Head>
-        <title>{titleName? titleName : title}</title>
+        <title>{titleName ? titleName : title}</title>
         <link rel="icon" href="/favicon.ico" />
         <meta name="description" content={description} />
         <meta

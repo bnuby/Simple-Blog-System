@@ -20,8 +20,6 @@ const PostCreate: FunctionComponent = () => {
   };
 
   const createHandler = async () => {
-    console.log(create);
-
     const token = getToken() as string;
 
     const res = await createPost(create, token);
@@ -34,10 +32,7 @@ const PostCreate: FunctionComponent = () => {
   };
 
   return (
-    <Layout
-      titleName="Create New Post"
-    >
-
+    <Layout titleName="Create New Post">
       <PostForm
         formTitle="Create Post Form"
         req={create}

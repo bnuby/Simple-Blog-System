@@ -13,6 +13,10 @@ import Spacer from "~components/spacer";
 import { getToken } from "~lib/auth";
 import Router from "next/router";
 
+/**
+ * Server Side fetch data request
+ * @param param
+ */
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   let postData = null;
   if (params) {
@@ -27,30 +31,40 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   };
 };
 
+/**
+ * Dynamic Post pages
+ * @param param
+ */
 export default function DynamicPost({
   postData,
 }: {
   postData: PostModel;
 }): JSX.Element {
+  // concatenate first and last name
   const fullName = `${get(postData, "user.first_name", "")} ${get(
     postData,
     "user.last_name",
     ""
   )}`;
 
+  // Get Token
   const token = getToken() as string;
 
+  // like button handler
   const likeHandler: any = async (post_id: string) => {
     const res = await likePost(post_id, token);
     if (res.status) {
+      // success then reload
       Router.reload();
       toastr.success("Post Liked!");
     }
   };
 
+  // unlike button handler
   const unLikeHandler: any = async (post_id: string) => {
     const res = await unLikePost(post_id, token);
     if (res.status) {
+      // success then reload
       Router.reload();
       toastr.success("Post unLiked!");
     }

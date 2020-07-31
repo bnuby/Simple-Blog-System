@@ -1,4 +1,10 @@
-import { FunctionComponent, useState, createRef, RefObject } from "react";
+import {
+  FunctionComponent,
+  useState,
+  createRef,
+  RefObject,
+  KeyboardEventHandler,
+} from "react";
 import { getPosts, PostsFilter, deletePost } from "~src/request/post";
 import PostModel from "~src/model/post.model";
 import PostCard from "~components/post-card";
@@ -15,7 +21,7 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import withAuth from "~components/withAuth";
 
-interface PostIndexProps {
+interface PostMeProps {
   customRefs?: {
     title: RefObject<HTMLInputElement>;
     likeGte: RefObject<HTMLInputElement>;
@@ -23,14 +29,31 @@ interface PostIndexProps {
   };
 }
 
+/**
+ * Declare swal alert2
+ */
 const MySwal = withReactContent(Swal);
 
-const PostIndex: FunctionComponent<PostIndexProps> = ({
+/**
+ * My Post Page
+ * @param param
+ */
+const PostMe: FunctionComponent<PostMeProps> = ({
   customRefs,
-}: PostIndexProps) => {
-  const me: UserModel = getLocalUser();
+}: PostMeProps) => {
+  if (!customRefs) {
+    throw new Error("Refs must be empty");
+  }
 
+  //
+  const me = getLocalUser() as UserModel;
+
+  // declare router
   const router = useRouter();
+
+  /**
+   * declare page variable
+   */
   let res: {
     total: number;
     page: number;
@@ -43,6 +66,9 @@ const PostIndex: FunctionComponent<PostIndexProps> = ({
     posts: [],
   };
 
+  /**
+   * Declare State for filtering, pagination
+   */
   const [pageOptions, setPageOptions] = useState<{
     totalData: number;
     filters: PostsFilter;
@@ -59,6 +85,7 @@ const PostIndex: FunctionComponent<PostIndexProps> = ({
     posts: [] as PostModel[],
   });
 
+  // declare temporary postfilter
   let postsFilter: PostsFilter = pageOptions.filters;
 
   /**
@@ -67,10 +94,10 @@ const PostIndex: FunctionComponent<PostIndexProps> = ({
    */
   const searchPost = (page: number) => {
     if (
-      customRefs?.title.current && 
+      customRefs?.title.current &&
       customRefs?.likeGte.current &&
       customRefs?.keywords.current
-      ) {
+    ) {
       postsFilter = {
         title: customRefs.title.current.value,
         likeGte: +customRefs.likeGte.current.value,
@@ -100,6 +127,13 @@ const PostIndex: FunctionComponent<PostIndexProps> = ({
       },
       posts: res.posts,
     });
+  };
+
+  // Key Enter Handler
+  const onKeyEnter: KeyboardEventHandler = (e) => {
+    if (e.key === "Enter") {
+      searchPost(1);
+    }
   };
 
   /**
@@ -152,7 +186,7 @@ const PostIndex: FunctionComponent<PostIndexProps> = ({
 
     // check the response is valid.
     if (data && data.posts && data.posts.data) {
-      if (pageOptions.totalData != +data.posts.total) {
+      if (pageOptions.totalData !== +data.posts.total) {
         res = {
           total: data.posts.total,
           page: data.posts.page,
@@ -183,6 +217,7 @@ const PostIndex: FunctionComponent<PostIndexProps> = ({
           labelText="Title"
           name="title"
           inputRef={customRefs.title}
+          onKeyDown={onKeyEnter}
         />
         <InputField
           style={{ width: "200px" }}
@@ -193,6 +228,7 @@ const PostIndex: FunctionComponent<PostIndexProps> = ({
           type="number"
           inputRef={customRefs.likeGte}
           min={0}
+          onKeyDown={onKeyEnter}
         />
         <InputField
           style={{ width: "300px" }}
@@ -202,7 +238,7 @@ const PostIndex: FunctionComponent<PostIndexProps> = ({
           name="keywords"
           type="text"
           inputRef={customRefs.keywords}
-          min={0}
+          onKeyDown={onKeyEnter}
         />
 
         <Button
@@ -237,7 +273,7 @@ const PostIndex: FunctionComponent<PostIndexProps> = ({
   );
 };
 
-PostIndex.defaultProps = {
+PostMe.defaultProps = {
   customRefs: {
     title: createRef<HTMLInputElement>(),
     likeGte: createRef<HTMLInputElement>(),
@@ -245,4 +281,4 @@ PostIndex.defaultProps = {
   },
 };
 
-export default withAuth(PostIndex);
+export default withAuth(PostMe);

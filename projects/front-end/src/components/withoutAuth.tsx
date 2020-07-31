@@ -16,8 +16,7 @@ const withoutAuth = (C: FunctionComponent): FunctionComponent => {
           return <Loading />;
         }
         router.push("/");
-      } catch (e) {
-      }
+      } catch (e) {}
     }
 
     return <C />;

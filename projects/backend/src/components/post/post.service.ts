@@ -23,7 +23,7 @@ export class PostService extends CommonService {
     @InjectModel(User.name)
     private readonly userModel: Model<User>,
     @InjectModel(Post.name)
-    private readonly model: Model<Post>
+    private readonly model: Model<Post>,
   ) {
     super();
   }

@@ -58,19 +58,19 @@ const PostCard: FunctionComponent<PostCardProps> = ({
         <div>
           <IconButton
             buttonType="warning"
-            onClick={() => clickHandler("edit", post)}
+            onClick={() => clickHandler && clickHandler("edit", post)}
           />
           <Spacer />
           <IconButton
             iconName="fa-trash"
             buttonType="danger"
-            onClick={() => clickHandler("delete", post)}
+            onClick={() => clickHandler && clickHandler("delete", post)}
           />
           <Spacer />
           <IconButton
             iconName="fa-info"
             buttonType="info"
-            onClick={() => clickHandler("info", post)}
+            onClick={() => clickHandler && clickHandler("info", post)}
           />
         </div>
       ) : null}

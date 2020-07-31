@@ -143,8 +143,6 @@ type Query {
 }
 
 type Mutation {
-  loginUser(login: LoginDTO!): ResTypeString!
-  validateToken(token: String!): User
   createUser(create: CreateUserInput!): ResTypeBoolean!
   updateUser(update: UpdateUserInput!, user_id: String!): ResTypeBoolean!
   deleteUser(user_id: String!): ResTypeBoolean!
@@ -153,11 +151,8 @@ type Mutation {
   deletePost(post_id: String!): ResTypePost!
   likePost(post_id: String!): ResTypeBoolean!
   unlikePost(post_id: String!): ResTypeBoolean!
-}
-
-input LoginDTO {
-  email: String!
-  password: String!
+  loginUser(login: LoginDTO!): ResTypeString!
+  validateToken(token: String!): User
 }
 
 input CreateUserInput {
@@ -185,6 +180,11 @@ input PostUpdate {
   title: String
   description: String
   keywords: [String!]
+}
+
+input LoginDTO {
+  email: String!
+  password: String!
 }
 
 type Subscription {
